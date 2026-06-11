@@ -1,5 +1,7 @@
 package com.jmcavel.sigcav.entity;
 
+import com.jmcavel.sigcav.enums.AccionAuditoria;
+import com.jmcavel.sigcav.enums.EntidadAuditoria;
 import jakarta.persistence.*;
 import lombok.*;
 
