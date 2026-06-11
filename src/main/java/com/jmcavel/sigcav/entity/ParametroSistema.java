@@ -28,7 +28,7 @@ public class ParametroSistema {
     private String descripcion;
 
     @Column(name = "tipo_dato", nullable = false, length = 20)
-    private String tipoDato;
+    private TipoDato tipoDato;
 
     @Column(name = "actualizado_en", nullable = false)
     private LocalDateTime actualizadoEn;
@@ -41,7 +41,7 @@ public class ParametroSistema {
     protected void antesDeCrear() {
         actualizadoEn = LocalDateTime.now();
         if (tipoDato == null) {
-            tipoDato = "texto";
+            tipoDato = TipoDato.TEXTO;
         }
     }
 

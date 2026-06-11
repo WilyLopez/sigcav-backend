@@ -23,10 +23,10 @@ public class LogAuditoria {
     private Usuario usuario;
 
     @Column(name = "accion", nullable = false, length = 50)
-    private String accion;
+    private AccionAuditoria accion;
 
     @Column(name = "entidad", nullable = false, length = 100)
-    private String entidad;
+    private EntidadAuditoria entidad;
 
     @Column(name = "entidad_id")
     private Long entidadId;
