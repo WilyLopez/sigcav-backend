@@ -44,7 +44,7 @@ public class ClienteFichaMapper {
                 .numeroCompleto(entidad.getNumeroCompleto())
                 .fechaEmision(entidad.getFechaEmision())
                 .total(entidad.getTotal())
-                .anulado(entidad.getAnulado())
+                .anulado(entidad.isAnulado())
                 .build();
     }
 }

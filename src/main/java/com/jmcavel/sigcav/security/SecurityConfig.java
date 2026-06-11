@@ -1,4 +1,4 @@
-package com.jmcavel.sigcav.config;
+package com.jmcavel.sigcav.security;
 
 import com.jmcavel.sigcav.security.JwtAuthenticationFilter;
 import com.jmcavel.sigcav.security.UserDetailsServiceImpl;
@@ -71,8 +71,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider proveedor = new DaoAuthenticationProvider();
-        proveedor.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider proveedor = new DaoAuthenticationProvider(userDetailsService);
         proveedor.setPasswordEncoder(passwordEncoder());
         return proveedor;
     }

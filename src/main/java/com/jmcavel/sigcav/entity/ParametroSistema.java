@@ -1,5 +1,6 @@
 package com.jmcavel.sigcav.entity;
 
+import com.jmcavel.sigcav.enums.TipoDato;
 import jakarta.persistence.*;
 import lombok.*;
 
