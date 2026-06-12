@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.jmcavel.sigcav.enums.TipoGasto;
+
 @Entity
 @Table(name = "gasto_pedido")
 @Getter
@@ -23,8 +25,9 @@ public class GastoPedido {
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_gasto", nullable = false, length = 25)
-    private String tipoGasto;
+    private TipoGasto tipoGasto;
 
     @Column(name = "descripcion", nullable = false, length = 300)
     private String descripcion;
