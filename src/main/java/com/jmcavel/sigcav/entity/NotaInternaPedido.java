@@ -7,24 +7,24 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "nota_correccion_pago")
+@Table(name = "nota_interna_pedido")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotaCorrecionPago {
+public class NotaInternaPedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "pago_id", nullable = false)
-    private Pago pago;
+    @JoinColumn(name = "pedido_id", nullable = false)
+    private Pedido pedido;
 
-    @Column(name = "justificacion", nullable = false, columnDefinition = "TEXT")
-    private String justificacion;
+    @Column(name = "contenido", nullable = false, columnDefinition = "TEXT")
+    private String contenido;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
