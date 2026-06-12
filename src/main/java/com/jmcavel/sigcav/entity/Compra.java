@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.jmcavel.sigcav.enums.TipoComprobanteProveedor;
+
 @Entity
 @Table(name = "compra")
 @Getter
@@ -29,8 +31,9 @@ public class Compra {
     @Column(name = "numero_comprobante_proveedor", length = 100)
     private String numeroComprobanteProveedor;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_comprobante_proveedor", length = 20)
-    private String tipoComprobanteProveedor;
+    private TipoComprobanteProveedor tipoComprobanteProveedor;
 
     @Column(name = "total", nullable = false, precision = 12, scale = 2)
     private BigDecimal total;
