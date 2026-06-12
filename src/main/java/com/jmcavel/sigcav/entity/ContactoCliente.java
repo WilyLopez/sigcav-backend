@@ -34,9 +34,11 @@ public class ContactoCliente {
     @Column(name = "cargo", length = 100)
     private String cargo;
 
+    @Builder.Default
     @Column(name = "es_principal", nullable = false)
     private Boolean esPrincipal = false;
 
+    @Builder.Default
     @Column(name = "creado_en", nullable = false, updatable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 }
