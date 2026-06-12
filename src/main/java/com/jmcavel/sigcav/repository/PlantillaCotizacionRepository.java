@@ -8,5 +8,8 @@ import java.util.List;
 
 @Repository
 public interface PlantillaCotizacionRepository extends JpaRepository<PlantillaCotizacion, Long> {
-    List<PlantillaCotizacion> findByActivoTrue();
+
+    List<PlantillaCotizacion> findByActivoTrueOrderByNombrePlantillaAsc();
+
+    boolean existsByNombrePlantillaAndActivoTrue(String nombrePlantilla);
 }
