@@ -10,6 +10,7 @@ public enum EntidadAuditoria {
     COTIZACION,
     PEDIDO,
     COMPRA,
+    COMPRA_PEDIDO,
     GASTO_PEDIDO,
     PAGO,
     COMPROBANTE,

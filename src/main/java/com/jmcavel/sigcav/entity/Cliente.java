@@ -49,12 +49,15 @@ public class Cliente {
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observaciones;
 
+    @Builder.Default
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
+    @Builder.Default
     @Column(name = "creado_en", nullable = false, updatable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 
+    @Builder.Default
     @Column(name = "actualizado_en", nullable = false)
     private LocalDateTime actualizadoEn = LocalDateTime.now();
 

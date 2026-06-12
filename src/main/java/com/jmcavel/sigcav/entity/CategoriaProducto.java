@@ -21,9 +21,11 @@ public class CategoriaProducto {
     @Column(name = "nombre", nullable = false, unique = true, length = 100)
     private String nombre;
 
+    @Builder.Default
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
+    @Builder.Default
     @Column(name = "creado_en", nullable = false, updatable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 }
