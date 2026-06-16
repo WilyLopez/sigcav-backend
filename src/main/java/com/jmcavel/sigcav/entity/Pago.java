@@ -1,6 +1,7 @@
 package com.jmcavel.sigcav.entity;
 
 import com.jmcavel.sigcav.enums.FormaPago;
+import com.jmcavel.sigcav.enums.TipoPago;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,8 +27,9 @@ public class Pago {
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_pago", nullable = false, length = 10)
-    private String tipoPago;
+    private TipoPago tipoPago;
 
     @Column(name = "monto", nullable = false, precision = 12, scale = 2)
     private BigDecimal monto;

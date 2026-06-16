@@ -8,5 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface AnulacionComprobanteRepository extends JpaRepository<AnulacionComprobante, Long> {
+
     Optional<AnulacionComprobante> findByComprobanteId(Long comprobanteId);
+
+    boolean existsByComprobanteId(Long comprobanteId);
 }
