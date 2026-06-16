@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "pago")
+@Table(name = "pago", uniqueConstraints = {@UniqueConstraint(columnNames = {"pedido_id", "tipo_pago"})})
 @Getter
 @Setter
 @NoArgsConstructor

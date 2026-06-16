@@ -19,7 +19,7 @@ public class AnulacionComprobante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "comprobante_id", nullable = false)
     private Comprobante comprobante;
 
