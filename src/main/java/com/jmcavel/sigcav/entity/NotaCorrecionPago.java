@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotaCorrecionPago {
+public class NotaCorreccionPago {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

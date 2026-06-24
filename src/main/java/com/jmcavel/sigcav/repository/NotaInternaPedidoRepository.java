@@ -8,5 +8,8 @@ import java.util.List;
 
 @Repository
 public interface NotaInternaPedidoRepository extends JpaRepository<NotaInternaPedido, Long> {
+
     List<NotaInternaPedido> findByPedidoIdOrderByCreadoEnDesc(Long pedidoId);
+
+    long countByPedidoId(Long pedidoId);
 }
