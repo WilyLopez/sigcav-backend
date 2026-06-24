@@ -29,7 +29,7 @@ public interface ReporteRepository extends JpaRepository<Pedido, Long> {
             SELECT p FROM Pedido p
             WHERE p.fechaIngreso BETWEEN :desde AND :hasta
             AND p.estado <> 'ANULADO'
-            ORDER BY p.margenGananciaPorcentaje DESC
+            ORDER BY (p.precioVenta - p.costoTotal) / p.precioVenta DESC
             """)
     List<Pedido> reporteRentabilidad(
             @Param("desde") LocalDate desde,

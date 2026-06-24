@@ -20,7 +20,7 @@ public interface ComprobanteRepository extends JpaRepository<Comprobante, Long> 
 
     boolean existsByPedidoId(Long pedidoId);
 
-    List<Comprobante> findByTipoComprobanteAndAuladoFalse(TipoComprobante tipoComprobante);
+    List<Comprobante> findByTipoComprobanteAndAnuladoFalse(TipoComprobante tipoComprobante);
 
     @Query("SELECT c FROM Comprobante c WHERE c.fechaEmision BETWEEN :desde AND :hasta")
     List<Comprobante> findByRangoFecha(@Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
