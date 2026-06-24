@@ -56,13 +56,4 @@ public class AuditoriaService {
     ) {
         registrar(usuarioId, accion, entidad, entidadId, detalle, null);
     }
-
-    // Convenience method for legacy or simplified calls
-    public void registrar(String accion, String entidad, Long entidadId, String detalle) {
-        registrar(null, 
-                AccionAuditoria.valueOf(accion.toUpperCase()), 
-                EntidadAuditoria.valueOf(entidad.toUpperCase()), 
-                entidadId, 
-                detalle);
-    }
 }

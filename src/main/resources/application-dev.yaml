@@ -1,0 +1,36 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    root: INFO
+    com.jmcavel.sigcav: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+
+sigcav:
+  jwt:
+    secret: ${JWT_SECRETO}
+    expiration-seconds: ${JWT_EXPIRACION_SEGUNDOS:900}
+
+  refresh-token:
+    expiration-days: ${REFRESH_TOKEN_EXPIRACION_DIAS:7}
+
+  session:
+    inactivity-minutes: ${SESION_INACTIVIDAD_MINUTOS:10}
+    cleanup-interval-ms: ${SESION_INTERVALO_LIMPIEZA_MS:60000}
+
+  cors:
+    allowed-origins: ${CORS_ORIGENES_PERMITIDOS}

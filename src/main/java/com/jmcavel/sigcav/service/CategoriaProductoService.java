@@ -3,6 +3,8 @@ package com.jmcavel.sigcav.service;
 import com.jmcavel.sigcav.dto.request.CategoriaProductoRequest;
 import com.jmcavel.sigcav.dto.response.CategoriaProductoResponse;
 import com.jmcavel.sigcav.entity.CategoriaProducto;
+import com.jmcavel.sigcav.enums.AccionAuditoria;
+import com.jmcavel.sigcav.enums.EntidadAuditoria;
 import com.jmcavel.sigcav.exception.ConflictoException;
 import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
 import com.jmcavel.sigcav.mapper.CategoriaProductoMapper;
@@ -48,8 +50,15 @@ public class CategoriaProductoService {
         validarNombreUnico(request.getNombre(), null);
         CategoriaProducto entidad = categoriaProductoMapper.toEntity(request);
         CategoriaProducto guardada = categoriaProductoRepository.save(entidad);
-        auditoriaService.registrar("CREAR", "categoria_producto", guardada.getId(),
-                "Categoría creada: " + guardada.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.CATEGORIA_PRODUCTO,
+                guardada.getId(),
+                "Categoría creada: " + guardada.getNombre()
+        );
+
         return categoriaProductoMapper.toResponse(guardada);
     }
 
@@ -59,8 +68,15 @@ public class CategoriaProductoService {
         validarNombreUnico(request.getNombre(), id);
         categoriaProductoMapper.actualizarDesdeRequest(request, entidad);
         CategoriaProducto guardada = categoriaProductoRepository.save(entidad);
-        auditoriaService.registrar("ACTUALIZAR", "categoria_producto", guardada.getId(),
-                "Categoría actualizada: " + guardada.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CATEGORIA_PRODUCTO,
+                guardada.getId(),
+                "Categoría actualizada: " + guardada.getNombre()
+        );
+
         return categoriaProductoMapper.toResponse(guardada);
     }
 
@@ -69,8 +85,14 @@ public class CategoriaProductoService {
         CategoriaProducto entidad = buscarEntidadActiva(id);
         entidad.setActivo(false);
         categoriaProductoRepository.save(entidad);
-        auditoriaService.registrar("DESACTIVAR", "categoria_producto", id,
-                "Categoría desactivada: " + entidad.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CATEGORIA_PRODUCTO,
+                id,
+                "Categoría desactivada: " + entidad.getNombre()
+        );
     }
 
     @Transactional
@@ -79,8 +101,14 @@ public class CategoriaProductoService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Categoría de producto no encontrada con id: " + id));
         entidad.setActivo(true);
         categoriaProductoRepository.save(entidad);
-        auditoriaService.registrar("ACTIVAR", "categoria_producto", id,
-                "Categoría activada: " + entidad.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CATEGORIA_PRODUCTO,
+                id,
+                "Categoría activada: " + entidad.getNombre()
+        );
     }
 
     public CategoriaProducto buscarEntidadActiva(Long id) {

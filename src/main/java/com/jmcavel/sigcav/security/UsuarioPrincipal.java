@@ -1,8 +1,10 @@
 package com.jmcavel.sigcav.security;
 
 import com.jmcavel.sigcav.entity.Usuario;
+import com.jmcavel.sigcav.enums.Rol;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -15,6 +17,7 @@ public class UsuarioPrincipal implements UserDetails {
     private final String nombreCompleto;
     private final String username;
     private final String password;
+    private final Rol rol;
     private final boolean activo;
 
     private UsuarioPrincipal(Usuario usuario) {
@@ -22,6 +25,7 @@ public class UsuarioPrincipal implements UserDetails {
         this.nombreCompleto = usuario.getNombreCompleto();
         this.username = usuario.getNombreUsuario();
         this.password = usuario.getContrasenaHash();
+        this.rol = usuario.getRol();
         this.activo = usuario.getActivo();
     }
 
@@ -31,7 +35,7 @@ public class UsuarioPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROL_" + rol.name()));
     }
 
     @Override

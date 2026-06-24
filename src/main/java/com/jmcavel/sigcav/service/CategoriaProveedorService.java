@@ -3,6 +3,8 @@ package com.jmcavel.sigcav.service;
 import com.jmcavel.sigcav.dto.request.CategoriaProveedorRequest;
 import com.jmcavel.sigcav.dto.response.CategoriaProveedorResponse;
 import com.jmcavel.sigcav.entity.CategoriaProveedor;
+import com.jmcavel.sigcav.enums.AccionAuditoria;
+import com.jmcavel.sigcav.enums.EntidadAuditoria;
 import com.jmcavel.sigcav.exception.ConflictoException;
 import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
 import com.jmcavel.sigcav.mapper.CategoriaProveedorMapper;
@@ -48,8 +50,15 @@ public class CategoriaProveedorService {
         validarNombreUnico(request.getNombre(), null);
         CategoriaProveedor entidad = categoriaProveedorMapper.toEntity(request);
         CategoriaProveedor guardada = categoriaProveedorRepository.save(entidad);
-        auditoriaService.registrar("CREAR", "categoria_proveedor", guardada.getId(),
-                "Categoría creada: " + guardada.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.CATEGORIA_PROVEEDOR,
+                guardada.getId(),
+                "Categoría creada: " + guardada.getNombre()
+        );
+
         return categoriaProveedorMapper.toResponse(guardada);
     }
 
@@ -59,8 +68,15 @@ public class CategoriaProveedorService {
         validarNombreUnico(request.getNombre(), id);
         categoriaProveedorMapper.actualizarDesdeRequest(request, entidad);
         CategoriaProveedor guardada = categoriaProveedorRepository.save(entidad);
-        auditoriaService.registrar("ACTUALIZAR", "categoria_proveedor", guardada.getId(),
-                "Categoría actualizada: " + guardada.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CATEGORIA_PROVEEDOR,
+                guardada.getId(),
+                "Categoría actualizada: " + guardada.getNombre()
+        );
+
         return categoriaProveedorMapper.toResponse(guardada);
     }
 
@@ -69,8 +85,14 @@ public class CategoriaProveedorService {
         CategoriaProveedor entidad = buscarEntidadActiva(id);
         entidad.setActivo(false);
         categoriaProveedorRepository.save(entidad);
-        auditoriaService.registrar("DESACTIVAR", "categoria_proveedor", id,
-                "Categoría desactivada: " + entidad.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CATEGORIA_PROVEEDOR,
+                id,
+                "Categoría desactivada: " + entidad.getNombre()
+        );
     }
 
     @Transactional
@@ -79,8 +101,14 @@ public class CategoriaProveedorService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Categoría de proveedor no encontrada con id: " + id));
         entidad.setActivo(true);
         categoriaProveedorRepository.save(entidad);
-        auditoriaService.registrar("ACTIVAR", "categoria_proveedor", id,
-                "Categoría activada: " + entidad.getNombre());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CATEGORIA_PROVEEDOR,
+                id,
+                "Categoría activada: " + entidad.getNombre()
+        );
     }
 
     public CategoriaProveedor buscarEntidadActiva(Long id) {

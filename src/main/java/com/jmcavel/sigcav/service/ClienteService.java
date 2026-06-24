@@ -5,6 +5,8 @@ import com.jmcavel.sigcav.dto.request.ContactoClienteRequest;
 import com.jmcavel.sigcav.dto.response.*;
 import com.jmcavel.sigcav.entity.Cliente;
 import com.jmcavel.sigcav.entity.ContactoCliente;
+import com.jmcavel.sigcav.enums.AccionAuditoria;
+import com.jmcavel.sigcav.enums.EntidadAuditoria;
 import com.jmcavel.sigcav.enums.TipoDocumento;
 import com.jmcavel.sigcav.exception.ConflictoException;
 import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
@@ -113,8 +115,15 @@ public class ClienteService {
         }
 
         Cliente guardado = clienteRepository.save(cliente);
-        auditoriaService.registrar("CREAR", "cliente", guardado.getId(),
-                "Cliente creado: " + guardado.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.CLIENTE,
+                guardado.getId(),
+                "Cliente creado: " + guardado.getNombreRazonSocial()
+        );
+
         return clienteMapper.toDetalleResponse(guardado);
     }
 
@@ -128,8 +137,15 @@ public class ClienteService {
         clienteMapper.actualizarDesdeRequest(request, cliente);
 
         Cliente guardado = clienteRepository.save(cliente);
-        auditoriaService.registrar("ACTUALIZAR", "cliente", id,
-                "Cliente actualizado: " + guardado.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CLIENTE,
+                id,
+                "Cliente actualizado: " + guardado.getNombreRazonSocial()
+        );
+
         return clienteMapper.toDetalleResponse(guardado);
     }
 
@@ -139,8 +155,14 @@ public class ClienteService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
         cliente.setActivo(false);
         clienteRepository.save(cliente);
-        auditoriaService.registrar("DESACTIVAR", "cliente", id,
-                "Cliente desactivado: " + cliente.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CLIENTE,
+                id,
+                "Cliente desactivado: " + cliente.getNombreRazonSocial()
+        );
     }
 
     @Transactional
@@ -149,8 +171,14 @@ public class ClienteService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
         cliente.setActivo(true);
         clienteRepository.save(cliente);
-        auditoriaService.registrar("ACTIVAR", "cliente", id,
-                "Cliente activado: " + cliente.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CLIENTE,
+                id,
+                "Cliente activado: " + cliente.getNombreRazonSocial()
+        );
     }
 
     public Cliente buscarEntidadActiva(Long id) {

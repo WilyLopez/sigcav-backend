@@ -5,6 +5,8 @@ CREATE TABLE usuario (
     correo              VARCHAR(150) NOT NULL UNIQUE,
     contrasena_hash     VARCHAR(255) NOT NULL,
     activo              BOOLEAN NOT NULL DEFAULT TRUE,
+    rol                 VARCHAR(30) NOT NULL DEFAULT 'ASISTENTE_ADMINISTRATIVO'
+                        CHECK (rol IN ('ADMINISTRADOR', 'ASISTENTE_ADMINISTRATIVO')),
     creado_en           TIMESTAMP NOT NULL DEFAULT NOW(),
     actualizado_en      TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -33,7 +35,7 @@ CREATE TABLE parametro_sistema (
     clave               VARCHAR(100) NOT NULL UNIQUE,
     valor               VARCHAR(500) NOT NULL,
     descripcion         VARCHAR(300),
-    tipo_dato           VARCHAR(20) NOT NULL DEFAULT 'texto',
+    tipo_dato           SMALLINT NOT NULL DEFAULT 0,
     actualizado_en      TIMESTAMP NOT NULL DEFAULT NOW(),
     actualizado_por_id  BIGINT REFERENCES usuario(id)
 );
@@ -299,14 +301,16 @@ CREATE TABLE anulacion_comprobante (
 
 CREATE TABLE log_auditoria (
     id                  BIGSERIAL PRIMARY KEY,
-    usuario_id          BIGINT REFERENCES usuario(id),
-    accion              VARCHAR(50) NOT NULL,
-    entidad             VARCHAR(100) NOT NULL,
+    usuario_id          BIGINT REFERENCES usuario(id) ON DELETE SET NULL,
+    accion              SMALLINT NOT NULL,
+    entidad             SMALLINT NOT NULL,
     entidad_id          BIGINT,
     detalle             TEXT,
     ip_origen           VARCHAR(45),
     creado_en           TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX idx_usuario_rol ON usuario(rol);
 
 CREATE INDEX idx_cliente_numero_documento    ON cliente(numero_documento);
 CREATE INDEX idx_cliente_nombre              ON cliente(nombre_razon_social);
@@ -370,15 +374,16 @@ INSERT INTO serie_comprobante (tipo_comprobante, serie, ultimo_correlativo) VALU
     ('NOTA_VENTA', 'NV001', 0);
 
 INSERT INTO parametro_sistema (clave, valor, descripcion, tipo_dato) VALUES
-    ('igv_porcentaje',              '18',   'Porcentaje de IGV aplicable en facturas',                           'decimal'),
-    ('adelanto_minimo_porcentaje',  '50',   'Porcentaje mínimo de adelanto requerido para iniciar producción',   'decimal'),
-    ('umbral_margen_verde',         '30',   'Margen de ganancia mínimo para semáforo verde (%)',                 'decimal'),
-    ('umbral_margen_amarillo',      '15',   'Margen de ganancia mínimo para semáforo amarillo (%)',              'decimal'),
-    ('dias_vencimiento_cotizacion', '7',    'Días por defecto para vencimiento de cotizaciones',                 'entero'),
-    ('dias_alerta_entrega',         '2',    'Días de anticipación para alerta de fecha de entrega próxima',      'entero'),
-    ('empresa_razon_social',        '',     'Razón social de la empresa emisora',                                'texto'),
-    ('empresa_ruc',                 '',     'RUC de la empresa emisora',                                         'texto'),
-    ('empresa_direccion',           '',     'Dirección de la empresa emisora',                                   'texto'),
-    ('empresa_telefono',            '',     'Teléfono de la empresa emisora',                                    'texto'),
-    ('empresa_correo',              '',     'Correo de la empresa emisora',                                      'texto'),
-    ('empresa_leyenda_comprobante', '',     'Leyenda que aparece al pie de los comprobantes',                    'texto');
+    ('igv_porcentaje',              '18',   'Porcentaje de IGV aplicable en facturas',                           1),
+    ('adelanto_minimo_porcentaje',  '50',   'Porcentaje mínimo de adelanto requerido para iniciar producción',   1),
+    ('umbral_margen_verde',         '30',   'Margen de ganancia mínimo para semáforo verde (%)',                 1),
+    ('umbral_margen_amarillo',      '15',   'Margen de ganancia mínimo para semáforo amarillo (%)',              1),
+    ('dias_vencimiento_cotizacion', '7',    'Días por defecto para vencimiento de cotizaciones',                 2),
+    ('dias_alerta_entrega',         '2',    'Días de anticipación para alerta de fecha de entrega próxima',      2),
+    ('empresa_razon_social',        '',     'Razón social de la empresa emisora',                                0),
+    ('empresa_ruc',                 '',     'RUC de la empresa emisora',                                         0),
+    ('empresa_direccion',           '',     'Dirección de la empresa emisora',                                   0),
+    ('empresa_telefono',            '',     'Teléfono de la empresa emisora',                                    0),
+    ('empresa_correo',              '',     'Correo de la empresa emisora',                                      0),
+    ('empresa_leyenda_comprobante', '',     'Leyenda que aparece al pie de los comprobantes',                    0)
+ON CONFLICT (clave) DO NOTHING;

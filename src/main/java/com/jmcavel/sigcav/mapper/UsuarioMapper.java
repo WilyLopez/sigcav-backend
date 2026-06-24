@@ -14,6 +14,7 @@ public class UsuarioMapper {
                 .nombreCompleto(usuario.getNombreCompleto())
                 .nombreUsuario(usuario.getNombreUsuario())
                 .correo(usuario.getCorreo())
+                .rol(usuario.getRol())
                 .activo(usuario.getActivo())
                 .creadoEn(usuario.getCreadoEn())
                 .actualizadoEn(usuario.getActualizadoEn())
@@ -25,6 +26,7 @@ public class UsuarioMapper {
                 .nombreCompleto(request.getNombreCompleto())
                 .nombreUsuario(request.getNombreUsuario())
                 .correo(request.getCorreo())
+                .rol(request.getRol())
                 .build();
     }
 }

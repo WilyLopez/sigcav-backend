@@ -4,6 +4,8 @@ import com.jmcavel.sigcav.dto.request.ContactoClienteRequest;
 import com.jmcavel.sigcav.dto.response.ContactoClienteResponse;
 import com.jmcavel.sigcav.entity.Cliente;
 import com.jmcavel.sigcav.entity.ContactoCliente;
+import com.jmcavel.sigcav.enums.AccionAuditoria;
+import com.jmcavel.sigcav.enums.EntidadAuditoria;
 import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
 import com.jmcavel.sigcav.exception.ReglaNegocioException;
 import com.jmcavel.sigcav.mapper.ContactoClienteMapper;
@@ -46,8 +48,15 @@ public class ContactoClienteService {
         validarPrincipalUnico(clienteId, null, request.getEsPrincipal());
         ContactoCliente entidad = contactoClienteMapper.toEntity(request, cliente);
         ContactoCliente guardado = contactoClienteRepository.save(entidad);
-        auditoriaService.registrar("CREAR", "contacto_cliente", guardado.getId(),
-                "Contacto creado para cliente id: " + clienteId);
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.CONTACTO_CLIENTE,
+                guardado.getId(),
+                "Contacto creado para cliente id: " + clienteId
+        );
+
         return contactoClienteMapper.toResponse(guardado);
     }
 
@@ -58,8 +67,15 @@ public class ContactoClienteService {
         validarPrincipalUnico(clienteId, contactoId, request.getEsPrincipal());
         contactoClienteMapper.actualizarDesdeRequest(request, entidad);
         ContactoCliente guardado = contactoClienteRepository.save(entidad);
-        auditoriaService.registrar("ACTUALIZAR", "contacto_cliente", contactoId,
-                "Contacto actualizado para cliente id: " + clienteId);
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.CONTACTO_CLIENTE,
+                contactoId,
+                "Contacto actualizado para cliente id: " + clienteId
+        );
+
         return contactoClienteMapper.toResponse(guardado);
     }
 
@@ -72,8 +88,14 @@ public class ContactoClienteService {
             throw new ReglaNegocioException("No se puede eliminar el único contacto del cliente");
         }
         contactoClienteRepository.delete(entidad);
-        auditoriaService.registrar("ELIMINAR", "contacto_cliente", contactoId,
-                "Contacto eliminado para cliente id: " + clienteId);
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.ELIMINAR,
+                EntidadAuditoria.CONTACTO_CLIENTE,
+                contactoId,
+                "Contacto eliminado para cliente id: " + clienteId
+        );
     }
 
     private ContactoCliente buscarEntidad(Long clienteId, Long contactoId) {

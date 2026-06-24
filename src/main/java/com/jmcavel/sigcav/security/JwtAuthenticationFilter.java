@@ -23,7 +23,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
-    private final AuthService authService;
 
     @Override
     protected void doFilterInternal(
@@ -31,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
         String token = extraerToken(request);
 
         if (StringUtils.hasText(token)) {
@@ -52,8 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
 
                     SecurityContextHolder.getContext().setAuthentication(autenticacion);
-
-                    authService.actualizarUltimoAcceso(token);
                 }
             } catch (TokenInvalidoException ex) {
                 SecurityContextHolder.clearContext();

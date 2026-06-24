@@ -5,6 +5,8 @@ import com.jmcavel.sigcav.dto.response.ProveedorDetalleResponse;
 import com.jmcavel.sigcav.dto.response.ProveedorResumenResponse;
 import com.jmcavel.sigcav.entity.CategoriaProveedor;
 import com.jmcavel.sigcav.entity.Proveedor;
+import com.jmcavel.sigcav.enums.AccionAuditoria;
+import com.jmcavel.sigcav.enums.EntidadAuditoria;
 import com.jmcavel.sigcav.enums.TipoDocumento;
 import com.jmcavel.sigcav.exception.ConflictoException;
 import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
@@ -46,8 +48,15 @@ public class ProveedorService {
         CategoriaProveedor categoria = categoriaProveedorService.buscarEntidadActiva(request.getCategoriaProveedorId());
         Proveedor entidad = proveedorMapper.toEntity(request, categoria);
         Proveedor guardado = proveedorRepository.save(entidad);
-        auditoriaService.registrar("CREAR", "proveedor", guardado.getId(),
-                "Proveedor creado: " + guardado.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.PROVEEDOR,
+                guardado.getId(),
+                "Proveedor creado: " + guardado.getNombreRazonSocial()
+        );
+
         return proveedorMapper.toDetalleResponse(guardado);
     }
 
@@ -60,8 +69,15 @@ public class ProveedorService {
         CategoriaProveedor categoria = categoriaProveedorService.buscarEntidadActiva(request.getCategoriaProveedorId());
         proveedorMapper.actualizarDesdeRequest(request, entidad, categoria);
         Proveedor guardado = proveedorRepository.save(entidad);
-        auditoriaService.registrar("ACTUALIZAR", "proveedor", id,
-                "Proveedor actualizado: " + guardado.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.PROVEEDOR,
+                id,
+                "Proveedor actualizado: " + guardado.getNombreRazonSocial()
+        );
+
         return proveedorMapper.toDetalleResponse(guardado);
     }
 
@@ -71,8 +87,14 @@ public class ProveedorService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Proveedor no encontrado con id: " + id));
         entidad.setActivo(false);
         proveedorRepository.save(entidad);
-        auditoriaService.registrar("DESACTIVAR", "proveedor", id,
-                "Proveedor desactivado: " + entidad.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.PROVEEDOR,
+                id,
+                "Proveedor desactivado: " + entidad.getNombreRazonSocial()
+        );
     }
 
     @Transactional
@@ -81,8 +103,14 @@ public class ProveedorService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Proveedor no encontrado con id: " + id));
         entidad.setActivo(true);
         proveedorRepository.save(entidad);
-        auditoriaService.registrar("ACTIVAR", "proveedor", id,
-                "Proveedor activado: " + entidad.getNombreRazonSocial());
+
+        auditoriaService.registrar(
+                null,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.PROVEEDOR,
+                id,
+                "Proveedor activado: " + entidad.getNombreRazonSocial()
+        );
     }
 
     public Proveedor buscarEntidadActiva(Long id) {

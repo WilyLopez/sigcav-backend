@@ -1,5 +1,6 @@
 package com.jmcavel.sigcav.entity;
 
+import com.jmcavel.sigcav.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,10 @@ public class Usuario {
     @Column(name = "contrasena_hash", nullable = false, length = 255)
     private String contrasenaHash;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", nullable = false, length = 30)
+    private Rol rol;
+
     @Column(name = "activo", nullable = false)
     private Boolean activo;
 
@@ -52,6 +57,9 @@ public class Usuario {
         actualizadoEn = LocalDateTime.now();
         if (activo == null) {
             activo = true;
+        }
+        if (rol == null) {
+            rol = Rol.ASISTENTE_ADMINISTRATIVO;
         }
     }
 

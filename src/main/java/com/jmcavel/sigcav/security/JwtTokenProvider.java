@@ -21,8 +21,8 @@ public class JwtTokenProvider {
     private final long expiracionMs;
 
     public JwtTokenProvider(
-            @Value("${sigcav.jwt.secreto}") String secreto,
-            @Value("${sigcav.jwt.expiracion-segundos:3600}") long expiracionSegundos
+            @Value("${sigcav.jwt.secret}") String secreto,
+            @Value("${sigcav.jwt.expiration-seconds:3600}") long expiracionSegundos
     ) {
         this.claveFirmado = Keys.hmacShaKeyFor(secreto.getBytes(StandardCharsets.UTF_8));
         this.expiracionMs = expiracionSegundos * 1000;
@@ -36,6 +36,7 @@ public class JwtTokenProvider {
                 .subject(usuario.getNombreUsuario())
                 .claim(SecurityConstants.CLAIM_USUARIO_ID, usuario.getId())
                 .claim(SecurityConstants.CLAIM_NOMBRE_USUARIO, usuario.getNombreCompleto())
+                .claim(SecurityConstants.CLAIM_ROL, usuario.getRol().name())
                 .issuedAt(ahora)
                 .expiration(expiracion)
                 .signWith(claveFirmado)
@@ -48,6 +49,10 @@ public class JwtTokenProvider {
 
     public Long obtenerUsuarioId(String token) {
         return parsearClaims(token).get(SecurityConstants.CLAIM_USUARIO_ID, Long.class);
+    }
+
+    public String obtenerRol(String token) {
+        return parsearClaims(token).get(SecurityConstants.CLAIM_ROL, String.class);
     }
 
     public boolean esValido(String token) {

@@ -1,12 +1,14 @@
 package com.jmcavel.sigcav.service;
 
 import com.jmcavel.sigcav.dto.request.ActualizarUsuarioRequest;
+import com.jmcavel.sigcav.dto.request.CambiarRolRequest;
 import com.jmcavel.sigcav.dto.request.CambioContrasenaRequest;
 import com.jmcavel.sigcav.dto.request.RegistroUsuarioRequest;
 import com.jmcavel.sigcav.dto.response.UsuarioResponse;
 import com.jmcavel.sigcav.entity.Usuario;
 import com.jmcavel.sigcav.enums.AccionAuditoria;
 import com.jmcavel.sigcav.enums.EntidadAuditoria;
+import com.jmcavel.sigcav.enums.Rol;
 import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
 import com.jmcavel.sigcav.exception.ReglaDeNegocioException;
 import com.jmcavel.sigcav.mapper.UsuarioMapper;
@@ -98,6 +100,34 @@ public class UsuarioService {
                 EntidadAuditoria.USUARIO,
                 guardado.getId(),
                 "Usuario actualizado: " + guardado.getNombreUsuario()
+        );
+
+        return usuarioMapper.toResponse(guardado);
+    }
+
+    @Transactional
+    public UsuarioResponse cambiarRol(Long id, CambiarRolRequest request, Long usuarioSolicitanteId) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Usuario no encontrado con id: " + id
+                ));
+
+        if (id.equals(usuarioSolicitanteId) && request.getRol() != Rol.ADMINISTRADOR) {
+            throw new ReglaDeNegocioException(
+                    "Un administrador no puede quitarse su propio rol de administrador"
+            );
+        }
+
+        Rol rolAnterior = usuario.getRol();
+        usuario.setRol(request.getRol());
+        Usuario guardado = usuarioRepository.save(usuario);
+
+        auditoriaService.registrar(
+                usuarioSolicitanteId,
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.USUARIO,
+                guardado.getId(),
+                "Rol cambiado de " + rolAnterior + " a " + request.getRol() + " para usuario: " + guardado.getNombreUsuario()
         );
 
         return usuarioMapper.toResponse(guardado);

@@ -7,6 +7,8 @@ import com.jmcavel.sigcav.dto.response.CompraPedidoResponse;
 import com.jmcavel.sigcav.dto.response.CompraResponse;
 import com.jmcavel.sigcav.dto.response.GastoPedidoResponse;
 import com.jmcavel.sigcav.entity.*;
+import com.jmcavel.sigcav.enums.AccionAuditoria;
+import com.jmcavel.sigcav.enums.EntidadAuditoria;
 import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
 import com.jmcavel.sigcav.exception.ReglaDeNegocioException;
 import com.jmcavel.sigcav.mapper.CompraPedidoMapper;
@@ -75,8 +77,13 @@ public class CompraService {
 
         itemCompraRepository.saveAll(items);
 
-        auditoriaService.registrar(usuarioActual, "CREAR", "compra", compra.getId(),
-                "Compra registrada por S/ " + total);
+        auditoriaService.registrar(
+                usuarioActual.getId(),
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.COMPRA,
+                compra.getId(),
+                "Compra registrada por S/ " + total
+        );
 
         return compraMapper.toResponse(compra, items);
     }
@@ -98,7 +105,7 @@ public class CompraService {
 
     @Transactional
     public CompraPedidoResponse asignarCompraAPedido(Long compraId, CompraPedidoRequest solicitud,
-                                                      Usuario usuarioActual) {
+                                                     Usuario usuarioActual) {
         Compra compra = obtenerCompraOFallar(compraId);
         Pedido pedido = obtenerPedidoOFallar(solicitud.getPedidoId());
 
@@ -124,16 +131,21 @@ public class CompraService {
         compraPedidoRepository.save(compraPedido);
         recalcularCostoPedido(pedido);
 
-        auditoriaService.registrar(usuarioActual, "CREAR", "compra_pedido", compraPedido.getId(),
+        auditoriaService.registrar(
+                usuarioActual.getId(),
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.COMPRA,
+                compraPedido.getId(),
                 "Asignación de compra " + compraId + " a pedido " + pedido.getNumeroPedido()
-                        + " por S/ " + solicitud.getMontoAsignado());
+                        + " por S/ " + solicitud.getMontoAsignado()
+        );
 
         return compraPedidoMapper.toResponse(compraPedido);
     }
 
     @Transactional
     public CompraPedidoResponse editarAsignacionCompra(Long compraPedidoId, CompraPedidoRequest solicitud,
-                                                        Usuario usuarioActual) {
+                                                       Usuario usuarioActual) {
         CompraPedido compraPedido = compraPedidoRepository.findById(compraPedidoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Asignación no encontrada con id: " + compraPedidoId));
@@ -154,8 +166,13 @@ public class CompraService {
         compraPedidoRepository.save(compraPedido);
         recalcularCostoPedido(pedido);
 
-        auditoriaService.registrar(usuarioActual, "EDITAR", "compra_pedido", compraPedidoId,
-                "Monto actualizado a S/ " + solicitud.getMontoAsignado());
+        auditoriaService.registrar(
+                usuarioActual.getId(),
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.COMPRA,
+                compraPedidoId,
+                "Monto actualizado a S/ " + solicitud.getMontoAsignado()
+        );
 
         return compraPedidoMapper.toResponse(compraPedido);
     }
@@ -172,8 +189,13 @@ public class CompraService {
         compraPedidoRepository.delete(compraPedido);
         recalcularCostoPedido(pedido);
 
-        auditoriaService.registrar(usuarioActual, "ELIMINAR", "compra_pedido", compraPedidoId,
-                "Asignación eliminada del pedido " + pedido.getNumeroPedido());
+        auditoriaService.registrar(
+                usuarioActual.getId(),
+                AccionAuditoria.ELIMINAR,
+                EntidadAuditoria.COMPRA,
+                compraPedidoId,
+                "Asignación eliminada del pedido " + pedido.getNumeroPedido()
+        );
     }
 
     @Transactional(readOnly = true)
@@ -194,7 +216,7 @@ public class CompraService {
 
     @Transactional
     public GastoPedidoResponse registrarGasto(Long pedidoId, GastoPedidoRequest solicitud,
-                                               Usuario usuarioActual) {
+                                              Usuario usuarioActual) {
         Pedido pedido = obtenerPedidoOFallar(pedidoId);
         validarEstadoEditable(pedido);
 
@@ -217,16 +239,21 @@ public class CompraService {
         gastoPedidoRepository.save(gasto);
         recalcularCostoPedido(pedido);
 
-        auditoriaService.registrar(usuarioActual, "CREAR", "gasto_pedido", gasto.getId(),
+        auditoriaService.registrar(
+                usuarioActual.getId(),
+                AccionAuditoria.CREAR,
+                EntidadAuditoria.GASTO_PEDIDO,
+                gasto.getId(),
                 "Gasto " + gasto.getTipoGasto() + " de S/ " + gasto.getMonto()
-                        + " en pedido " + pedido.getNumeroPedido());
+                        + " en pedido " + pedido.getNumeroPedido()
+        );
 
         return gastoPedidoMapper.toResponse(gasto);
     }
 
     @Transactional
     public GastoPedidoResponse editarGasto(Long gastoId, GastoPedidoRequest solicitud,
-                                            Usuario usuarioActual) {
+                                           Usuario usuarioActual) {
         GastoPedido gasto = obtenerGastoOFallar(gastoId);
         Pedido pedido = gasto.getPedido();
         validarEstadoEditable(pedido);
@@ -246,8 +273,13 @@ public class CompraService {
         gastoPedidoRepository.save(gasto);
         recalcularCostoPedido(pedido);
 
-        auditoriaService.registrar(usuarioActual, "EDITAR", "gasto_pedido", gastoId,
-                "Gasto actualizado a S/ " + solicitud.getMonto());
+        auditoriaService.registrar(
+                usuarioActual.getId(),
+                AccionAuditoria.EDITAR,
+                EntidadAuditoria.GASTO_PEDIDO,
+                gastoId,
+                "Gasto actualizado a S/ " + solicitud.getMonto()
+        );
 
         return gastoPedidoMapper.toResponse(gasto);
     }
@@ -261,8 +293,13 @@ public class CompraService {
         gastoPedidoRepository.delete(gasto);
         recalcularCostoPedido(pedido);
 
-        auditoriaService.registrar(usuarioActual, "ELIMINAR", "gasto_pedido", gastoId,
-                "Gasto eliminado del pedido " + pedido.getNumeroPedido());
+        auditoriaService.registrar(
+                usuarioActual.getId(),
+                AccionAuditoria.ELIMINAR,
+                EntidadAuditoria.GASTO_PEDIDO,
+                gastoId,
+                "Gasto eliminado del pedido " + pedido.getNumeroPedido()
+        );
     }
 
     @Transactional(readOnly = true)

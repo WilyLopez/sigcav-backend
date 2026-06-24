@@ -2,14 +2,18 @@ spring:
   application:
     name: sigcav-api
 
+  profiles:
+    active: ${SPRING_PROFILE:dev}
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
     hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
+      maximum-pool-size: ${DB_POOL_MAX:10}
+      minimum-idle: ${DB_POOL_MIN:2}
       idle-timeout: 30000
       connection-timeout: 20000
       pool-name: SigcavHikariPool
@@ -17,11 +21,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: false
+    open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
         jdbc:
           time_zone: America/Lima
 
@@ -30,17 +33,14 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: false
     validate-on-migrate: true
-    out-of-order: false
 
-  cache:
-    type: simple
+  jackson:
+    time-zone: America/Lima
+    locale: es_PE
 
-  async:
-    executor:
-      core-pool-size: 2
-      max-pool-size: 5
-      queue-capacity: 100
-      thread-name-prefix: sigcav-async-
+  messages:
+    basename: messages
+    encoding: UTF-8
 
 server:
   port: ${SERVER_PORT:8080}
@@ -49,25 +49,23 @@ server:
   error:
     include-message: never
     include-stacktrace: never
-    include-binding-errors: never
 
 sigcav:
   jwt:
-    secreto: ${JWT_SECRETO}
-    expiracion-segundos: ${JWT_EXPIRACION_SEGUNDOS:3600}
+    secret: ${JWT_SECRETO}
+    expiration-seconds: ${JWT_EXPIRACION_SEGUNDOS:900}
+
   refresh-token:
-    expiracion-dias: ${REFRESH_TOKEN_EXPIRACION_DIAS:7}
-  sesion:
-    inactividad-minutos: ${SESION_INACTIVIDAD_MINUTOS:10}
-    intervalo-limpieza-ms: ${SESION_INTERVALO_LIMPIEZA_MS:60000}
+    expiration-days: ${REFRESH_TOKEN_EXPIRACION_DIAS:7}
+
+  session:
+    inactivity-minutes: ${SESION_INACTIVIDAD_MINUTOS:10}
+    cleanup-interval-ms: ${SESION_INTERVALO_LIMPIEZA_MS:60000}
+
   cors:
-    origenes-permitidos: ${CORS_ORIGENES_PERMITIDOS:http://localhost:3000}
+    allowed-origins: ${CORS_ORIGENES_PERMITIDOS}
 
 logging:
   level:
     root: INFO
-    com.jmcavel.sigcav: ${LOG_LEVEL:INFO}
-    org.springframework.security: WARN
-    org.hibernate.SQL: WARN
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    com.jmcavel.sigcav: INFO
