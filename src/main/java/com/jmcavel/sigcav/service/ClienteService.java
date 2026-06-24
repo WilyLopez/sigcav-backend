@@ -56,7 +56,7 @@ public class ClienteService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
 
         List<CotizacionResumenResponse> cotizaciones = cotizacionRepository
-                .findByClienteId(id)
+                .findAllByClienteIdOrderByFechaEmisionDesc(id)
                 .stream()
                 .map(clienteFichaMapper::toCotizacionResumen)
                 .collect(Collectors.toList());
