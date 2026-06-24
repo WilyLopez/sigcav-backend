@@ -56,9 +56,6 @@ public class AuditoriaService {
     ) {
         registrar(usuarioId, accion, entidad, entidadId, detalle, null);
     }
-<<<<<<< HEAD
-}
-=======
 
     public void registrar(Usuario usuario, String accion, String entidad, Long entidadId, String detalle) {
         registrar(usuario != null ? usuario.getId() : null,
@@ -77,4 +74,3 @@ public class AuditoriaService {
                 detalle);
     }
 }
->>>>>>> 6bd5c364f4711f278123d76afb312257077b663d

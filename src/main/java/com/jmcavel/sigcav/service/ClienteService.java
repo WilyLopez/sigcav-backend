@@ -56,7 +56,7 @@ public class ClienteService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
 
         List<CotizacionResumenResponse> cotizaciones = cotizacionRepository
-                .findAllByClienteIdOrderByFechaEmisionDesc(id)
+                .findByClienteId(id)
                 .stream()
                 .map(clienteFichaMapper::toCotizacionResumen)
                 .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class ClienteService {
                 .collect(Collectors.toList());
 
         List<ComprobanteResumenResponse> comprobantes = comprobanteRepository
-                .findAllByClienteIdOrderByFechaEmisionDesc(id)
+                .findByClienteId(id)
                 .stream()
                 .map(clienteFichaMapper::toComprobanteResumen)
                 .collect(Collectors.toList());

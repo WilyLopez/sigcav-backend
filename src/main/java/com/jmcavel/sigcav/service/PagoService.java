@@ -5,10 +5,10 @@ import com.jmcavel.sigcav.dto.request.PagoRequest;
 import com.jmcavel.sigcav.dto.response.NotaCorreccionPagoResponse;
 import com.jmcavel.sigcav.dto.response.PagoResponse;
 import com.jmcavel.sigcav.entity.*;
-import com.jmcavel.sigcav.enums.EstadoPago;
+import com.jmcavel.sigcav.enums.EstadoPagoPedido;
 import com.jmcavel.sigcav.enums.TipoPago;
 import com.jmcavel.sigcav.exception.PagoYaExisteException;
-import com.jmcavel.sigcav.exception.ResourceNotFoundException;
+import com.jmcavel.sigcav.exception.RecursoNoEncontradoException;
 import com.jmcavel.sigcav.mapper.NotaCorreccionPagoMapper;
 import com.jmcavel.sigcav.mapper.PagoMapper;
 import com.jmcavel.sigcav.repository.*;
@@ -33,7 +33,7 @@ public class PagoService {
     @Transactional
     public PagoResponse registrarPago(PagoRequest request, Long usuarioId) {
         Pedido pedido = pedidoRepository.findById(request.getPedidoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado"));
 
         if (pagoRepository.existsByPedidoIdAndTipoPago(pedido.getId(), request.getTipoPago())) {
             throw new PagoYaExisteException("Ya existe un pago de tipo "
@@ -46,7 +46,7 @@ public class PagoService {
         }
 
         Usuario registradoPor = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         Pago pago = Pago.builder()
                 .pedido(pedido)
@@ -68,10 +68,10 @@ public class PagoService {
     @Transactional
     public NotaCorreccionPagoResponse corregirPago(NotaCorreccionPagoRequest request, Long usuarioId) {
         Pago pago = pagoRepository.findById(request.getPagoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pago no encontrado"));
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         NotaCorreccionPago nota = NotaCorreccionPago.builder()
                 .pago(pago)
@@ -104,11 +104,11 @@ public class PagoService {
         boolean tieneSaldo = pagoRepository.existsByPedidoIdAndTipoPago(pedido.getId(), TipoPago.SALDO);
 
         if (tieneAdelanto && tieneSaldo) {
-            pedido.setEstadoPago(EstadoPago.PAGADO_COMPLETAMENTE);
+            pedido.setEstadoPago(EstadoPagoPedido.PAGADO_COMPLETAMENTE);
         } else if (tieneAdelanto) {
-            pedido.setEstadoPago(EstadoPago.ADELANTO_REGISTRADO);
+            pedido.setEstadoPago(EstadoPagoPedido.ADELANTO_REGISTRADO);
         } else {
-            pedido.setEstadoPago(EstadoPago.SIN_ADELANTO);
+            pedido.setEstadoPago(EstadoPagoPedido.SIN_ADELANTO);
         }
     }
 }

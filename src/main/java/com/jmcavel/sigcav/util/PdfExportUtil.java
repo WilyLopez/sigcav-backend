@@ -69,10 +69,12 @@ public class PdfExportUtil {
                 tabla.addCell(p.getCliente().getNombreRazonSocial());
                 tabla.addCell(p.getPrecioVenta().toPlainString());
                 tabla.addCell(p.getCostoTotal().toPlainString());
-                tabla.addCell(p.getGananciaBruta() != null
-                        ? p.getGananciaBruta().toPlainString() : "0.00");
-                tabla.addCell(p.getMargenGananciaPorcentaje() != null
-                        ? p.getMargenGananciaPorcentaje().toPlainString() : "0.00");
+                BigDecimal gananciaBruta = p.getPrecioVenta().subtract(p.getCostoTotal());
+                BigDecimal margen = p.getPrecioVenta().compareTo(BigDecimal.ZERO) != 0
+                        ? gananciaBruta.multiply(new BigDecimal("100")).divide(p.getPrecioVenta(), 2, java.math.RoundingMode.HALF_UP)
+                        : BigDecimal.ZERO;
+                tabla.addCell(gananciaBruta.toPlainString());
+                tabla.addCell(margen.toPlainString());
                 tabla.addCell(p.getEstado().name());
             }
 
@@ -103,7 +105,7 @@ public class PdfExportUtil {
                 tabla.addCell(c.getNumeroComprobanteProveedor() != null
                         ? c.getNumeroComprobanteProveedor() : "-");
                 tabla.addCell(c.getTipoComprobanteProveedor() != null
-                        ? c.getTipoComprobanteProveedor() : "-");
+                        ? c.getTipoComprobanteProveedor().name() : "-");
                 tabla.addCell(c.getTotal().toPlainString());
             }
 

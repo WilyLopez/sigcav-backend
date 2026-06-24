@@ -4,7 +4,7 @@ import com.jmcavel.sigcav.dto.request.NotaCorreccionPagoRequest;
 import com.jmcavel.sigcav.dto.request.PagoRequest;
 import com.jmcavel.sigcav.dto.response.NotaCorreccionPagoResponse;
 import com.jmcavel.sigcav.dto.response.PagoResponse;
-import com.jmcavel.sigcav.security.UsuarioAutenticado;
+import com.jmcavel.sigcav.security.UsuarioPrincipal;
 import com.jmcavel.sigcav.service.PagoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class PagoController {
     @PostMapping
     public ResponseEntity<PagoResponse> registrarPago(
             @Valid @RequestBody PagoRequest request,
-            @AuthenticationPrincipal UsuarioAutenticado usuarioAutenticado) {
+            @AuthenticationPrincipal UsuarioPrincipal usuarioAutenticado) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(pagoService.registrarPago(request, usuarioAutenticado.getId()));
     }
@@ -33,7 +33,7 @@ public class PagoController {
     @PostMapping("/correcciones")
     public ResponseEntity<NotaCorreccionPagoResponse> corregirPago(
             @Valid @RequestBody NotaCorreccionPagoRequest request,
-            @AuthenticationPrincipal UsuarioAutenticado usuarioAutenticado) {
+            @AuthenticationPrincipal UsuarioPrincipal usuarioAutenticado) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(pagoService.corregirPago(request, usuarioAutenticado.getId()));
     }

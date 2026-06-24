@@ -67,10 +67,12 @@ public class ExcelExportUtil {
                 row.createCell(3).setCellValue(p.getFechaEntregaComprometida().toString());
                 row.createCell(4).setCellValue(p.getPrecioVenta().doubleValue());
                 row.createCell(5).setCellValue(p.getCostoTotal().doubleValue());
-                row.createCell(6).setCellValue(p.getGananciaBruta() != null
-                        ? p.getGananciaBruta().doubleValue() : 0);
-                row.createCell(7).setCellValue(p.getMargenGananciaPorcentaje() != null
-                        ? p.getMargenGananciaPorcentaje().doubleValue() : 0);
+                BigDecimal gananciaBruta = p.getPrecioVenta().subtract(p.getCostoTotal());
+                BigDecimal margen = p.getPrecioVenta().compareTo(BigDecimal.ZERO) != 0
+                        ? gananciaBruta.multiply(new BigDecimal("100")).divide(p.getPrecioVenta(), 2, java.math.RoundingMode.HALF_UP)
+                        : BigDecimal.ZERO;
+                row.createCell(6).setCellValue(gananciaBruta.doubleValue());
+                row.createCell(7).setCellValue(margen.doubleValue());
                 row.createCell(8).setCellValue(p.getEstado().name());
             }
 
@@ -99,7 +101,7 @@ public class ExcelExportUtil {
                 row.createCell(3).setCellValue(c.getNumeroComprobanteProveedor() != null
                         ? c.getNumeroComprobanteProveedor() : "");
                 row.createCell(4).setCellValue(c.getTipoComprobanteProveedor() != null
-                        ? c.getTipoComprobanteProveedor() : "");
+                        ? c.getTipoComprobanteProveedor().name() : "");
                 row.createCell(5).setCellValue(c.getTotal().doubleValue());
             }
 

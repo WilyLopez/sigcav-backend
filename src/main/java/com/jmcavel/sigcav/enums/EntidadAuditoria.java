@@ -7,7 +7,6 @@ public enum EntidadAuditoria {
     PROVEEDOR,
     CATEGORIA_PRODUCTO,
     CATEGORIA_PROVEEDOR,
-    COMPRA_PEDIDO,
     COTIZACION,
     PEDIDO,
     COMPRA,

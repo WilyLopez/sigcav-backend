@@ -5,7 +5,7 @@ import com.jmcavel.sigcav.dto.request.ComprobanteRequest;
 import com.jmcavel.sigcav.dto.response.AnulacionComprobanteResponse;
 import com.jmcavel.sigcav.dto.response.ComprobanteResponse;
 import com.jmcavel.sigcav.enums.TipoComprobante;
-import com.jmcavel.sigcav.security.UsuarioAutenticado;
+import com.jmcavel.sigcav.security.UsuarioPrincipal;
 import com.jmcavel.sigcav.service.ComprobanteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class ComprobanteController {
     @PostMapping
     public ResponseEntity<ComprobanteResponse> emitirComprobante(
             @Valid @RequestBody ComprobanteRequest request,
-            @AuthenticationPrincipal UsuarioAutenticado usuarioAutenticado) {
+            @AuthenticationPrincipal UsuarioPrincipal usuarioAutenticado) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(comprobanteService.emitirComprobante(request, usuarioAutenticado.getId()));
     }
@@ -36,7 +36,7 @@ public class ComprobanteController {
     @PostMapping("/anular")
     public ResponseEntity<AnulacionComprobanteResponse> anularComprobante(
             @Valid @RequestBody AnulacionComprobanteRequest request,
-            @AuthenticationPrincipal UsuarioAutenticado usuarioAutenticado) {
+            @AuthenticationPrincipal UsuarioPrincipal usuarioAutenticado) {
         return ResponseEntity.ok(comprobanteService.anularComprobante(request, usuarioAutenticado.getId()));
     }
 

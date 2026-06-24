@@ -37,7 +37,7 @@ public class ComprobanteService {
     @Transactional
     public ComprobanteResponse emitirComprobante(ComprobanteRequest request, Long usuarioId) {
         Pedido pedido = pedidoRepository.findById(request.getPedidoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado"));
 
         validarEstadoParaEmision(pedido);
 
@@ -53,7 +53,7 @@ public class ComprobanteService {
 
         SerieComprobante serie = serieComprobanteRepository
                 .findByTipoComprobanteWithLock(request.getTipoComprobante())
-                .orElseThrow(() -> new ResourceNotFoundException("Serie de comprobante no configurada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Serie de comprobante no configurada"));
 
         int nuevoCorrelativo = serie.getUltimoCorrelativo() + 1;
         serie.setUltimoCorrelativo(nuevoCorrelativo);
@@ -80,7 +80,7 @@ public class ComprobanteService {
         }
 
         Usuario emitidoPor = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         Comprobante comprobante = Comprobante.builder()
                 .pedido(pedido)
@@ -111,14 +111,14 @@ public class ComprobanteService {
     @Transactional
     public AnulacionComprobanteResponse anularComprobante(AnulacionComprobanteRequest request, Long usuarioId) {
         Comprobante comprobante = comprobanteRepository.findById(request.getComprobanteId())
-                .orElseThrow(() -> new ResourceNotFoundException("Comprobante no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Comprobante no encontrado"));
 
         if (comprobante.isAnulado()) {
             throw new ComprobanteYaAnuladoException("El comprobante ya fue anulado");
         }
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         comprobante.setAnulado(true);
         comprobanteRepository.save(comprobante);
@@ -136,14 +136,14 @@ public class ComprobanteService {
     @Transactional(readOnly = true)
     public ComprobanteResponse obtenerPorId(Long id) {
         Comprobante comprobante = comprobanteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Comprobante no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Comprobante no encontrado"));
         return comprobanteMapper.toResponse(comprobante);
     }
 
     @Transactional(readOnly = true)
     public ComprobanteResponse obtenerPorPedido(Long pedidoId) {
         Comprobante comprobante = comprobanteRepository.findByPedidoId(pedidoId)
-                .orElseThrow(() -> new ResourceNotFoundException("El pedido no tiene comprobante emitido"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("El pedido no tiene comprobante emitido"));
         return comprobanteMapper.toResponse(comprobante);
     }
 
