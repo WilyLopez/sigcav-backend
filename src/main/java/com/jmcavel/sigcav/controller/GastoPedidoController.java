@@ -3,7 +3,7 @@ package com.jmcavel.sigcav.controller;
 import com.jmcavel.sigcav.dto.request.GastoPedidoRequest;
 import com.jmcavel.sigcav.dto.response.CompraPedidoResponse;
 import com.jmcavel.sigcav.dto.response.GastoPedidoResponse;
-import com.jmcavel.sigcav.entity.Usuario;
+import com.jmcavel.sigcav.security.UsuarioPrincipal;
 import com.jmcavel.sigcav.service.CompraService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/pedidos")
+@RequestMapping("/pedidos")
 @RequiredArgsConstructor
 public class GastoPedidoController {
 
@@ -25,9 +25,9 @@ public class GastoPedidoController {
     public ResponseEntity<GastoPedidoResponse> registrarGasto(
             @PathVariable Long pedidoId,
             @Valid @RequestBody GastoPedidoRequest solicitud,
-            @AuthenticationPrincipal Usuario usuarioActual) {
+            @AuthenticationPrincipal UsuarioPrincipal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(compraService.registrarGasto(pedidoId, solicitud, usuarioActual));
+                .body(compraService.registrarGasto(pedidoId, solicitud, principal.getId()));
     }
 
     @GetMapping("/{pedidoId}/gastos")
@@ -44,15 +44,15 @@ public class GastoPedidoController {
     public ResponseEntity<GastoPedidoResponse> editarGasto(
             @PathVariable Long gastoId,
             @Valid @RequestBody GastoPedidoRequest solicitud,
-            @AuthenticationPrincipal Usuario usuarioActual) {
-        return ResponseEntity.ok(compraService.editarGasto(gastoId, solicitud, usuarioActual));
+            @AuthenticationPrincipal UsuarioPrincipal principal) {
+        return ResponseEntity.ok(compraService.editarGasto(gastoId, solicitud, principal.getId()));
     }
 
     @DeleteMapping("/gastos/{gastoId}")
     public ResponseEntity<Void> eliminarGasto(
             @PathVariable Long gastoId,
-            @AuthenticationPrincipal Usuario usuarioActual) {
-        compraService.eliminarGasto(gastoId, usuarioActual);
+            @AuthenticationPrincipal UsuarioPrincipal principal) {
+        compraService.eliminarGasto(gastoId, principal.getId());
         return ResponseEntity.noContent().build();
     }
 }

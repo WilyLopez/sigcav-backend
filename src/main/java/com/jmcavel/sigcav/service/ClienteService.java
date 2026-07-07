@@ -14,6 +14,7 @@ import com.jmcavel.sigcav.exception.ReglaNegocioException;
 import com.jmcavel.sigcav.mapper.ClienteFichaMapper;
 import com.jmcavel.sigcav.mapper.ClienteMapper;
 import com.jmcavel.sigcav.mapper.ContactoClienteMapper;
+import com.jmcavel.sigcav.dao.ClienteDAO;
 import com.jmcavel.sigcav.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClienteService {
 
-    private final ClienteRepository clienteRepository;
+    private final ClienteDAO clienteDAO;
     private final CotizacionRepository cotizacionRepository;
     private final PedidoRepository pedidoRepository;
     private final ComprobanteRepository comprobanteRepository;
@@ -39,20 +40,20 @@ public class ClienteService {
 
     @Transactional(readOnly = true)
     public Page<ClienteResumenResponse> buscar(String termino, Pageable pageable) {
-        return clienteRepository.buscarActivosPorTermino(termino, pageable)
+        return clienteDAO.buscarActivosPorTermino(termino, pageable)
                 .map(clienteMapper::toResumenResponse);
     }
 
     @Transactional(readOnly = true)
     public ClienteDetalleResponse obtenerPorId(Long id) {
-        Cliente cliente = clienteRepository.buscarConContactos(id)
+        Cliente cliente = clienteDAO.buscarConContactos(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
         return clienteMapper.toDetalleResponse(cliente);
     }
 
     @Transactional(readOnly = true)
     public ClienteFichaResponse obtenerFicha(Long id) {
-        Cliente cliente = clienteRepository.buscarConContactos(id)
+        Cliente cliente = clienteDAO.buscarConContactos(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
 
         List<CotizacionResumenResponse> cotizaciones = cotizacionRepository
@@ -95,7 +96,7 @@ public class ClienteService {
                 .cotizaciones(cotizaciones)
                 .pedidos(pedidos)
                 .comprobantes(comprobantes)
-                .montoAcumuladoVentas(clienteRepository.calcularMontoAcumuladoVentas(id))
+                .montoAcumuladoVentas(clienteDAO.calcularMontoAcumuladoVentas(id))
                 .build();
     }
 
@@ -114,7 +115,7 @@ public class ClienteService {
             cliente.getContactos().addAll(contactos);
         }
 
-        Cliente guardado = clienteRepository.save(cliente);
+        Cliente guardado = clienteDAO.save(cliente);
 
         auditoriaService.registrar(
                 null,
@@ -129,14 +130,14 @@ public class ClienteService {
 
     @Transactional
     public ClienteDetalleResponse actualizar(Long id, ClienteRequest request) {
-        Cliente cliente = clienteRepository.buscarConContactos(id)
+        Cliente cliente = clienteDAO.buscarConContactos(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
 
         validarDocumento(request);
         validarNumeroDocumentoUnico(request.getNumeroDocumento(), id);
         clienteMapper.actualizarDesdeRequest(request, cliente);
 
-        Cliente guardado = clienteRepository.save(cliente);
+        Cliente guardado = clienteDAO.save(cliente);
 
         auditoriaService.registrar(
                 null,
@@ -151,10 +152,10 @@ public class ClienteService {
 
     @Transactional
     public void desactivar(Long id) {
-        Cliente cliente = clienteRepository.findByIdAndActivoTrue(id)
+        Cliente cliente = clienteDAO.findByIdAndActivoTrue(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
         cliente.setActivo(false);
-        clienteRepository.save(cliente);
+        clienteDAO.save(cliente);
 
         auditoriaService.registrar(
                 null,
@@ -167,10 +168,10 @@ public class ClienteService {
 
     @Transactional
     public void activar(Long id) {
-        Cliente cliente = clienteRepository.findById(id)
+        Cliente cliente = clienteDAO.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
         cliente.setActivo(true);
-        clienteRepository.save(cliente);
+        clienteDAO.save(cliente);
 
         auditoriaService.registrar(
                 null,
@@ -182,7 +183,7 @@ public class ClienteService {
     }
 
     public Cliente buscarEntidadActiva(Long id) {
-        return clienteRepository.findByIdAndActivoTrue(id)
+        return clienteDAO.findByIdAndActivoTrue(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
     }
 
@@ -199,8 +200,8 @@ public class ClienteService {
 
     private void validarNumeroDocumentoUnico(String numeroDocumento, Long idExcluido) {
         boolean existe = idExcluido == null
-                ? clienteRepository.existsByNumeroDocumento(numeroDocumento)
-                : clienteRepository.existsByNumeroDocumentoAndIdNot(numeroDocumento, idExcluido);
+                ? clienteDAO.existsByNumeroDocumento(numeroDocumento)
+                : clienteDAO.existsByNumeroDocumentoAndIdNot(numeroDocumento, idExcluido);
         if (existe) {
             throw new ConflictoException("Ya existe un cliente con el número de documento: " + numeroDocumento);
         }

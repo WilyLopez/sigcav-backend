@@ -2,11 +2,9 @@ package com.jmcavel.sigcav.controller;
 
 import com.jmcavel.sigcav.dto.request.CompraPedidoRequest;
 import com.jmcavel.sigcav.dto.request.CompraRequest;
-import com.jmcavel.sigcav.dto.request.GastoPedidoRequest;
 import com.jmcavel.sigcav.dto.response.CompraPedidoResponse;
 import com.jmcavel.sigcav.dto.response.CompraResponse;
-import com.jmcavel.sigcav.dto.response.GastoPedidoResponse;
-import com.jmcavel.sigcav.entity.Usuario;
+import com.jmcavel.sigcav.security.UsuarioPrincipal;
 import com.jmcavel.sigcav.service.CompraService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/compras")
+@RequestMapping("/compras")
 @RequiredArgsConstructor
 public class CompraController {
 
@@ -29,9 +27,9 @@ public class CompraController {
     @PostMapping
     public ResponseEntity<CompraResponse> registrarCompra(
             @Valid @RequestBody CompraRequest solicitud,
-            @AuthenticationPrincipal Usuario usuarioActual) {
+            @AuthenticationPrincipal UsuarioPrincipal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(compraService.registrarCompra(solicitud, usuarioActual));
+                .body(compraService.registrarCompra(solicitud, principal.getId()));
     }
 
     @GetMapping("/{id}")
@@ -51,9 +49,9 @@ public class CompraController {
     public ResponseEntity<CompraPedidoResponse> asignarCompraAPedido(
             @PathVariable Long id,
             @Valid @RequestBody CompraPedidoRequest solicitud,
-            @AuthenticationPrincipal Usuario usuarioActual) {
+            @AuthenticationPrincipal UsuarioPrincipal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(compraService.asignarCompraAPedido(id, solicitud, usuarioActual));
+                .body(compraService.asignarCompraAPedido(id, solicitud, principal.getId()));
     }
 
     @GetMapping("/{id}/asignaciones")
@@ -65,15 +63,15 @@ public class CompraController {
     public ResponseEntity<CompraPedidoResponse> editarAsignacion(
             @PathVariable Long asignacionId,
             @Valid @RequestBody CompraPedidoRequest solicitud,
-            @AuthenticationPrincipal Usuario usuarioActual) {
-        return ResponseEntity.ok(compraService.editarAsignacionCompra(asignacionId, solicitud, usuarioActual));
+            @AuthenticationPrincipal UsuarioPrincipal principal) {
+        return ResponseEntity.ok(compraService.editarAsignacionCompra(asignacionId, solicitud, principal.getId()));
     }
 
     @DeleteMapping("/asignaciones/{asignacionId}")
     public ResponseEntity<Void> eliminarAsignacion(
             @PathVariable Long asignacionId,
-            @AuthenticationPrincipal Usuario usuarioActual) {
-        compraService.eliminarAsignacionCompra(asignacionId, usuarioActual);
+            @AuthenticationPrincipal UsuarioPrincipal principal) {
+        compraService.eliminarAsignacionCompra(asignacionId, principal.getId());
         return ResponseEntity.noContent().build();
     }
 }

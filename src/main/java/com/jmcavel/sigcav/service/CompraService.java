@@ -36,13 +36,16 @@ public class CompraService {
     private final GastoPedidoRepository gastoPedidoRepository;
     private final PedidoRepository pedidoRepository;
     private final ProveedorRepository proveedorRepository;
+    private final UsuarioRepository usuarioRepository;
     private final CompraMapper compraMapper;
     private final CompraPedidoMapper compraPedidoMapper;
     private final GastoPedidoMapper gastoPedidoMapper;
     private final AuditoriaService auditoriaService;
 
     @Transactional
-    public CompraResponse registrarCompra(CompraRequest solicitud, Usuario usuarioActual) {
+    public CompraResponse registrarCompra(CompraRequest solicitud, Long usuarioId) {
+        Usuario usuarioActual = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId));
         Proveedor proveedor = obtenerProveedorOFallar(solicitud.getProveedorId());
 
         BigDecimal total = calcularTotalItems(solicitud);
@@ -105,7 +108,9 @@ public class CompraService {
 
     @Transactional
     public CompraPedidoResponse asignarCompraAPedido(Long compraId, CompraPedidoRequest solicitud,
-                                                     Usuario usuarioActual) {
+                                                     Long usuarioId) {
+        Usuario usuarioActual = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId));
         Compra compra = obtenerCompraOFallar(compraId);
         Pedido pedido = obtenerPedidoOFallar(solicitud.getPedidoId());
 
@@ -145,7 +150,9 @@ public class CompraService {
 
     @Transactional
     public CompraPedidoResponse editarAsignacionCompra(Long compraPedidoId, CompraPedidoRequest solicitud,
-                                                       Usuario usuarioActual) {
+                                                       Long usuarioId) {
+        Usuario usuarioActual = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId));
         CompraPedido compraPedido = compraPedidoRepository.findById(compraPedidoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Asignación no encontrada con id: " + compraPedidoId));
@@ -178,7 +185,9 @@ public class CompraService {
     }
 
     @Transactional
-    public void eliminarAsignacionCompra(Long compraPedidoId, Usuario usuarioActual) {
+    public void eliminarAsignacionCompra(Long compraPedidoId, Long usuarioId) {
+        Usuario usuarioActual = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId));
         CompraPedido compraPedido = compraPedidoRepository.findById(compraPedidoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Asignación no encontrada con id: " + compraPedidoId));
@@ -216,7 +225,9 @@ public class CompraService {
 
     @Transactional
     public GastoPedidoResponse registrarGasto(Long pedidoId, GastoPedidoRequest solicitud,
-                                              Usuario usuarioActual) {
+                                              Long usuarioId) {
+        Usuario usuarioActual = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId));
         Pedido pedido = obtenerPedidoOFallar(pedidoId);
         validarEstadoEditable(pedido);
 
@@ -253,7 +264,9 @@ public class CompraService {
 
     @Transactional
     public GastoPedidoResponse editarGasto(Long gastoId, GastoPedidoRequest solicitud,
-                                           Usuario usuarioActual) {
+                                           Long usuarioId) {
+        Usuario usuarioActual = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId));
         GastoPedido gasto = obtenerGastoOFallar(gastoId);
         Pedido pedido = gasto.getPedido();
         validarEstadoEditable(pedido);
@@ -285,7 +298,9 @@ public class CompraService {
     }
 
     @Transactional
-    public void eliminarGasto(Long gastoId, Usuario usuarioActual) {
+    public void eliminarGasto(Long gastoId, Long usuarioId) {
+        Usuario usuarioActual = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con id: " + usuarioId));
         GastoPedido gasto = obtenerGastoOFallar(gastoId);
         Pedido pedido = gasto.getPedido();
         validarEstadoEditable(pedido);
